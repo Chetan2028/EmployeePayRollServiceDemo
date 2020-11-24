@@ -165,5 +165,35 @@ namespace EmployeePayRollServiceDemo
                 this.connection.Close();
             }
         }
+
+        public bool UpdateDataUsingPreparedStatement()
+        {
+            try
+            {
+                string updateQuery = "update Employee_Payroll set Emp_Name = @empName where Id = @id";
+                using (this.connection)
+                {
+                    SqlCommand command = new SqlCommand(updateQuery, this.connection);
+                    command.Prepare();
+                    command.Parameters.AddWithValue("@empName", "Apoorva");
+                    command.Parameters.AddWithValue("@id", 9);
+                    this.connection.Open();
+                    var result = command.ExecuteNonQuery();
+                    if (result != 0)
+                    {
+                        return true;
+                    }
+                    return false;
+                }
+            }
+            catch(Exception e)
+            {
+                throw new Exception(e.Message);
+            }
+            finally
+            {
+                this.connection.Close();
+            }
+        }
     }
 }
