@@ -8,7 +8,8 @@ namespace EmployeePayRollServiceDemo
         {
             Console.WriteLine("Welcome to Employee Payroll Database");
             EmployeeRepo employeeRepo = new EmployeeRepo();
-            employeeRepo.RetrieveEmployeesWithinDateRange();
+            employeeRepo.EnsureDatabaseConnection();
+            employeeRepo.GetAggregateFunctions();
         }
     }
 }

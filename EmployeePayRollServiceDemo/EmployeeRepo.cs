@@ -260,5 +260,50 @@ namespace EmployeePayRollServiceDemo
                 this.connection.Close();
             }
         }
+
+        public void GetAggregateFunctions()
+        {
+            try
+            {
+                string query = "Select Gender , Sum(Net_Pay),Avg(Net_Pay),Max(Net_Pay),Min(Net_Pay),Count(Gender)" +
+                    " from Employee_Payroll group by Gender";
+                using (this.connection)
+                {
+                    SqlCommand command = new SqlCommand(query, this.connection);
+                    this.connection.Open();
+                    SqlDataReader reader = command.ExecuteReader();
+                    if (reader.HasRows)
+                    {
+                        Console.WriteLine("Gender\t" + "Sum\t"+"Avg\t"+"Max\t"+"Min\t"+"GenderCount\t");
+                        while (reader.Read())
+                        {
+                            string gender = reader.GetString(0);
+                            decimal sum = reader.GetDecimal(1);
+                            decimal avg = reader.GetDecimal(2);
+                            decimal max = reader.GetDecimal(3);
+                            decimal min = reader.GetDecimal(4);
+                            int genderCount = reader.GetInt32(5);
+
+                            Console.WriteLine(gender + "   " + sum + "   " + avg + "   " + max + "   " + min + "   " + genderCount);
+                            Console.WriteLine();
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine("NO Data Found");
+                    }
+                    reader.Close();
+                    this.connection.Close();
+                }
+            }
+            catch(Exception e)
+            {
+                throw new Exception(e.Message);
+            }
+            finally
+            {
+                this.connection.Close();
+            }
+        }
     }
 }
