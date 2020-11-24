@@ -139,11 +139,11 @@ namespace EmployeePayRollServiceDemo
         /// </summary>
         /// <returns></returns>
         /// <exception cref="Exception"></exception>
-        public bool UpdateData()
+        public bool UpdateData(string updateQuery)
         {
             try
             {
-                string updateQuery = "update Employee_Payroll set Basic_Pay = 1000745000 where Id = 1";
+                //string updateQuery = "update Employee_Payroll set Basic_Pay = 1000745000 where Id = 1";
                 using (this.connection)
                 {
                     SqlCommand command = new SqlCommand(updateQuery, this.connection);
