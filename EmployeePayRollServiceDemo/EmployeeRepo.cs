@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Text;
+using System.Threading;
 
 namespace EmployeePayRollServiceDemo
 {
@@ -297,6 +298,186 @@ namespace EmployeePayRollServiceDemo
                 }
             }
             catch(Exception e)
+            {
+                throw new Exception(e.Message);
+            }
+            finally
+            {
+                this.connection.Close();
+            }
+        }
+
+        /// <summary>
+        /// UC9
+        /// Gets all employees new table structure.
+        /// </summary>
+        public void GetAllEmployees_NewTableStructure()
+        {
+            try
+            {
+                EmployeeModel employeeModel = new EmployeeModel();
+                using (this.connection)
+                {
+                    string query = "select emp.Employee_Id, emp.Emp_Name, emp.Start_Date, emp.Gender, emp.Emp_Address, emp.Phone_Number," +
+                        "dept.Dept_no, dept.Dept_name,dept.Dept_location,sal.Salary_id, sal.Basic_pay, sal.Deductions, sal.Taxable_pay," +
+                        " sal.Income_tax, sal.Net_pay from Employee emp, Department dept, Salary sal " +
+                        "where emp.Dept_no = dept.Dept_no and sal.Employee_Id = emp.Employee_Id; ";
+                    SqlCommand command = new SqlCommand(query, this.connection);
+                    this.connection.Open();
+                    SqlDataReader dr = command.ExecuteReader();
+                    //Check for rows
+                    if (dr.HasRows)
+                    {
+                        while (dr.Read())
+                        {
+                            employeeModel.EmployeeId = dr.GetInt32(0);
+                            employeeModel.Emp_Name = dr.GetString(1);
+                            employeeModel.Emp_Start_Date = dr.GetDateTime(2);
+                            employeeModel.Gender = Convert.ToChar(dr.GetString(3));
+                            employeeModel.Emp_Address = dr.GetString(4);
+                            employeeModel.Emp_Phone_Number = dr.GetString(5);
+                            employeeModel.DepartmentId = dr.GetInt32(6);
+                            employeeModel.Department = dr.GetString(7);
+                            employeeModel.DepartmentLocation = dr.GetString(8);
+                            employeeModel.SalaryId = dr.GetInt32(9);
+                            employeeModel.Basic_Pay = dr.GetDecimal(10);
+                            employeeModel.Deductions = dr.GetDecimal(11);
+                            employeeModel.Taxable_Pay = dr.GetDecimal(12);
+                            employeeModel.Income_Tax = dr.GetDecimal(13);
+                            employeeModel.Net_Pay = dr.GetDecimal(14);
+
+                            Console.WriteLine(employeeModel.EmployeeId + "  " + employeeModel.Emp_Name + "  " + employeeModel.Emp_Start_Date
+                                + "  " + employeeModel.Gender + "  " + employeeModel.Emp_Address  + "  " + employeeModel.Emp_Phone_Number
+                                + "  " + employeeModel.DepartmentId + "  " + employeeModel.Department + "  "+employeeModel.DepartmentLocation+"  " + employeeModel.Basic_Pay + "  " +
+                                employeeModel.Deductions + "  " + employeeModel.Taxable_Pay + "  " + employeeModel.Income_Tax + "  " + employeeModel.Net_Pay);
+
+                            Console.WriteLine();
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine("No Data found");
+                    }
+                    dr.Close();
+                    this.connection.Close();
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
+            finally
+            {
+                this.connection.Close();
+            }
+        }
+        /// <summary>
+        /// Gets the aggregate salary within date range new table.
+        /// </summary>
+        public void GetAggregateSalaryForEachGender_NewTable()
+        {
+            try
+            {
+                using (this.connection)
+                {
+                    this.connection.Open();
+                    string query = "Select Gender , Sum(Net_Pay),Avg(Net_Pay),Max(Net_Pay),Min(Net_Pay)" +
+                    ",Count(Gender) from Salary INNER JOIN Employee on Salary.Employee_Id = Employee.Employee_Id " +
+                    "group by Gender";
+                    SqlCommand command = new SqlCommand(query, this.connection);
+                    //this.connection.Open();
+                    SqlDataReader reader = command.ExecuteReader();
+                    if (reader.HasRows)
+                    {
+                        Console.WriteLine("Gender\t" + "Sum\t" + "Avg\t" + "Max\t" + "Min\t" + "GenderCount\t");
+                        while (reader.Read())
+                        {
+                            string gender = reader.GetString(0);
+                            decimal sum = reader.GetDecimal(1);
+                            decimal avg = reader.GetDecimal(2);
+                            decimal max = reader.GetDecimal(3);
+                            decimal min = reader.GetDecimal(4);
+                            int genderCount = reader.GetInt32(5);
+
+                            Console.WriteLine(gender + "   " + sum + "   " + avg + "   " + max + "   " + min + "   " + genderCount);
+                            Console.WriteLine();
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine("NO Data Found");
+                    }
+                    reader.Close();
+                    this.connection.Close();
+                }
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.Message);
+            }
+            finally
+            {
+                connection.Close();
+            }
+        }
+
+        /// <summary>
+        /// Gets the employees within given date range new table.
+        /// </summary>
+        public void GetEmployeesWithinGivenDateRange_NewTable()
+        {
+            try
+            {
+                EmployeeModel employeeModel = new EmployeeModel();
+                string query = "select emp.Employee_Id, emp.Emp_Name, emp.Start_Date, emp.Gender, emp.Emp_Address, emp.Phone_Number," +
+                        "dept.Dept_no, dept.Dept_name,dept.Dept_location,sal.Salary_id, sal.Basic_pay, sal.Deductions, sal.Taxable_pay," +
+                        " sal.Income_tax, sal.Net_pay from Employee emp, Department dept, Salary sal " +
+                        "where emp.Dept_no = dept.Dept_no and sal.Employee_Id = emp.Employee_Id and" +
+                        " Start_Date between cast('01-01-2019' as date) and SYSDATETIME()"; 
+                using (this.connection)
+                {
+                    SqlCommand command = new SqlCommand(query, this.connection);
+                    this.connection.Open();
+                    SqlDataReader dr = command.ExecuteReader();
+
+                    //Check for data presence
+                    if (dr.HasRows)
+                    {
+                        while (dr.Read())
+                        {
+                            employeeModel.EmployeeId = dr.GetInt32(0);
+                            employeeModel.Emp_Name = dr.GetString(1);
+                            employeeModel.Emp_Start_Date = dr.GetDateTime(2);
+                            employeeModel.Gender = Convert.ToChar(dr.GetString(3));
+                            employeeModel.Emp_Address = dr.GetString(4);
+                            employeeModel.Emp_Phone_Number = dr.GetString(5);
+                            employeeModel.DepartmentId = dr.GetInt32(6);
+                            employeeModel.Department = dr.GetString(7);
+                            employeeModel.DepartmentLocation = dr.GetString(8);
+                            employeeModel.SalaryId = dr.GetInt32(9);
+                            employeeModel.Basic_Pay = dr.GetDecimal(10);
+                            employeeModel.Deductions = dr.GetDecimal(11);
+                            employeeModel.Taxable_Pay = dr.GetDecimal(12);
+                            employeeModel.Income_Tax = dr.GetDecimal(13);
+                            employeeModel.Net_Pay = dr.GetDecimal(14);
+
+                            Console.WriteLine(employeeModel.EmployeeId + "  " + employeeModel.Emp_Name + "  " + employeeModel.Emp_Start_Date
+                                + "  " + employeeModel.Gender + "  " + employeeModel.Emp_Address + "  " + employeeModel.Emp_Phone_Number
+                                + "  " + employeeModel.DepartmentId + "  " + employeeModel.Department + "  " + employeeModel.DepartmentLocation + "  " + employeeModel.Basic_Pay + "  " +
+                                employeeModel.Deductions + "  " + employeeModel.Taxable_Pay + "  " + employeeModel.Income_Tax + "  " + employeeModel.Net_Pay);
+
+                            Console.WriteLine();
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine("No Data Found");
+                    }
+                    dr.Close();
+                    this.connection.Close();
+                }
+            }
+            catch (Exception e)
             {
                 throw new Exception(e.Message);
             }

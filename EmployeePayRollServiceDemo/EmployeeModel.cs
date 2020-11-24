@@ -19,5 +19,12 @@ namespace EmployeePayRollServiceDemo
         public decimal Taxable_Pay { get; set; }
         public decimal Income_Tax { get; set; }
         public decimal Net_Pay { get; set; }
+
+        public int SalaryId { get; set; }
+        public int DepartmentId { get; set; }
+
+        public int EmployeeId { get; set; }
+        public string DepartmentLocation { get; set; }
+
     }
 }
