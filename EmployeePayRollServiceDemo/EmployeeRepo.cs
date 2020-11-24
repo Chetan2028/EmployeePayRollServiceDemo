@@ -10,6 +10,7 @@ namespace EmployeePayRollServiceDemo
         public static string connectionString = @"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=Payroll_Service;Integrated Security=True";
         SqlConnection connection = new SqlConnection(connectionString);
 
+
         /// <summary>
         /// Ensures the database connection.
         /// </summary>
