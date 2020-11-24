@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.SqlClient;
 using System.Text;
 
@@ -31,6 +32,9 @@ namespace EmployeePayRollServiceDemo
             }
         }
 
+        /// <summary>
+        /// Gets all employees.
+        /// </summary>
         public void GetAllEmployees()
         {
             try
@@ -80,6 +84,52 @@ namespace EmployeePayRollServiceDemo
             catch (Exception e)
             {
                 Console.WriteLine(e.Message);
+            }
+        }
+
+        /// <summary>
+        /// Adds the employee.
+        /// </summary>
+        /// <param name="model">The model.</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
+        public bool AddEmployee(EmployeeModel model)
+        {
+            try
+            {
+                using (this.connection)
+                {
+                    SqlCommand command = new SqlCommand("SpAddEmployeeDetails", this.connection);
+                    command.CommandType = CommandType.StoredProcedure;
+                    command.Parameters.AddWithValue("@Emp_Name", model.Emp_Name);
+                    command.Parameters.AddWithValue("@Emp_Salary", model.Emp_Salary);
+                    command.Parameters.AddWithValue("@Emp_Start_Date", model.Emp_Start_Date);
+                    command.Parameters.AddWithValue("@Gender", model.Gender);
+                    command.Parameters.AddWithValue("@Emp_Phone_Number", model.Emp_Phone_Number);
+                    command.Parameters.AddWithValue("@Emp_Address", model.Emp_Address);
+                    command.Parameters.AddWithValue("@Department", model.Department);
+                    command.Parameters.AddWithValue("@Basic_Pay", model.Basic_Pay);
+                    command.Parameters.AddWithValue("@Deductions", model.Deductions);
+                    command.Parameters.AddWithValue("@Taxable_Pay", model.Taxable_Pay);
+                    command.Parameters.AddWithValue("@Income_Tax", model.Income_Tax);
+                    command.Parameters.AddWithValue("@Net_Pay", model.Net_Pay);
+                    this.connection.Open();
+                    var result = command.ExecuteNonQuery();
+                    this.connection.Close();
+                    if (result != 0)
+                    {
+                        return true;
+                    }
+                    return false;
+                }
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.Message);
+            }
+            finally
+            {
+                this.connection.Close();
             }
         }
     }
