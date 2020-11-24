@@ -132,5 +132,38 @@ namespace EmployeePayRollServiceDemo
                 this.connection.Close();
             }
         }
+
+        /// <summary>
+        /// Updates the data.
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
+        public bool UpdateData()
+        {
+            try
+            {
+                string updateQuery = "update Employee_Payroll set Basic_Pay = 1000745000 where Id = 1";
+                using (this.connection)
+                {
+                    SqlCommand command = new SqlCommand(updateQuery, this.connection);
+                    this.connection.Open();
+                    var result = command.ExecuteNonQuery();
+                    this.connection.Close();
+                    if (result != 0)
+                    {
+                        return true;
+                    }
+                    return false;
+                }
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.Message);
+            }
+            finally
+            {
+                this.connection.Close();
+            }
+        }
     }
 }
