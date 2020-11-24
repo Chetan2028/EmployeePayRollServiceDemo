@@ -166,6 +166,11 @@ namespace EmployeePayRollServiceDemo
             }
         }
 
+        /// <summary>
+        /// Updates the data using prepared statement.
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
         public bool UpdateDataUsingPreparedStatement()
         {
             try
@@ -184,6 +189,66 @@ namespace EmployeePayRollServiceDemo
                         return true;
                     }
                     return false;
+                }
+            }
+            catch(Exception e)
+            {
+                throw new Exception(e.Message);
+            }
+            finally
+            {
+                this.connection.Close();
+            }
+        }
+
+        /// <summary>
+        /// Retrieves the employees within date range.
+        /// </summary>
+        public void RetrieveEmployeesWithinDateRange()
+        {
+            try
+            {
+                EmployeeModel employeeModel = new EmployeeModel();
+                string query = "Select * from Employee_Payroll where Emp_Start_Date between cast('01-01-2018' as date) and SYSDATETIME()";
+                using (this.connection)
+                {
+                    SqlCommand command = new SqlCommand(query, this.connection);
+                    this.connection.Open();
+                    SqlDataReader reader = command.ExecuteReader();
+
+                    //Check for data presence
+                    if (reader.HasRows)
+                    {
+                        while (reader.Read())
+                        {
+                            employeeModel.Id = reader.GetInt32(0);
+                            employeeModel.Emp_Name = reader.GetString(1);
+                            employeeModel.Emp_Salary = reader.GetDecimal(2);
+                            employeeModel.Emp_Start_Date = reader.GetDateTime(3);
+                            employeeModel.Gender = Convert.ToChar(reader.GetString(4));
+                            employeeModel.Emp_Phone_Number = reader.GetString(5);
+                            employeeModel.Emp_Address = reader.GetString(6);
+                            employeeModel.Department = reader.GetString(7);
+                            employeeModel.Basic_Pay = reader.GetDecimal(8);
+                            employeeModel.Deductions = reader.GetDecimal(9);
+                            employeeModel.Taxable_Pay = reader.GetDecimal(10);
+                            employeeModel.Income_Tax = reader.GetDecimal(11);
+                            employeeModel.Net_Pay = reader.GetDecimal(12);
+
+                            Console.WriteLine(employeeModel.Id + "  " + employeeModel.Emp_Name + "  " + employeeModel.Emp_Salary
+                                + "  " + employeeModel.Emp_Start_Date + "  " + employeeModel.Gender + "  " + employeeModel.Emp_Phone_Number
+                                + "  " + employeeModel.Emp_Address + "  " + employeeModel.Department + "  " + employeeModel.Basic_Pay + "  " +
+                                employeeModel.Deductions + "  " + employeeModel.Taxable_Pay + "  " + employeeModel.Income_Tax + "  " + employeeModel.Net_Pay);
+
+                            Console.WriteLine();
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine("No Data Found");
+                    }
+                    reader.Close();
+                    this.connection.Close();
                 }
             }
             catch(Exception e)
