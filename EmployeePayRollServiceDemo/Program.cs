@@ -8,7 +8,7 @@ namespace EmployeePayRollServiceDemo
         {
             Console.WriteLine("Welcome to Employee Payroll Database");
             EmployeeRepo employeeRepo = new EmployeeRepo();
-            bool result = employeeRepo.UpdateData();
+            bool result = employeeRepo.UpdateDataUsingPreparedStatement();
             Console.WriteLine("Updated data in table : " + result);
         }
     }
