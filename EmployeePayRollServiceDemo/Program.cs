@@ -9,6 +9,7 @@ namespace EmployeePayRollServiceDemo
             Console.WriteLine("Welcome to Employee Payroll Database");
             EmployeeRepo employeeRepo = new EmployeeRepo();
             employeeRepo.EnsureDatabaseConnection();
+            employeeRepo.GetAllEmployees();
         }
     }
 }
