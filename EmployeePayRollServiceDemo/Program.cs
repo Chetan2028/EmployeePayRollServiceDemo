@@ -6,7 +6,9 @@ namespace EmployeePayRollServiceDemo
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            Console.WriteLine("Welcome to Employee Payroll Database");
+            EmployeeRepo employeeRepo = new EmployeeRepo();
+            employeeRepo.EnsureDatabaseConnection();
         }
     }
 }
